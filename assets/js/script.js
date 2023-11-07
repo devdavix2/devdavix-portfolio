@@ -70,3 +70,26 @@ for (let i = 0, len = revealDelayElements.length; i < len; i++) {
 
 window.addEventListener("scroll", reveal);
 window.addEventListener("load", reveal);
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactForm = document.getElementById('contactForm');
+        const successToast = document.getElementById('successToast');
+
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Assuming you've already implemented the sendmail.php logic
+
+            // Show the success toast
+            successToast.classList.remove('hidden');
+
+            // Hide the toast after 5 seconds
+            setTimeout(function () {
+                successToast.classList.add('hidden');
+            }, 5000);
+        });
+    });
+
