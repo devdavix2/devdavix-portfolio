@@ -85,30 +85,29 @@ document.addEventListener('DOMContentLoaded', function () {
           // Get form data
           const formData = new FormData(contactForm);
 
-          // Send form data using Fetch API
-          fetch('sendmail.php', {
+          // Send form data to serverless function
+          fetch('/api/sendmail', {
               method: 'POST',
-              body: formData
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(Object.fromEntries(formData)),
           })
-          .then(response => {
-              if (response.ok) {
-                  // Show the success toast
-                  successToast.classList.remove('hidden');
+          .then(response => response.json())
+          .then(data => {
+              // Show the success toast
+              successToast.classList.remove('hidden');
 
-                  // Hide the toast after 5 seconds
-                  setTimeout(function () {
-                      successToast.classList.add('hidden');
-                  }, 5000);
+              // Hide the toast after 5 seconds
+              setTimeout(function () {
+                  successToast.classList.add('hidden');
+              }, 5000);
 
-                  // Optionally, reset the form
-                  contactForm.reset();
-              } else {
-                  console.error('Error submitting form:', response.statusText);
-                  // Handle error - show an error message or take appropriate action
-              }
+              // Optionally, reset the form
+              contactForm.reset();
           })
           .catch(error => {
-              console.error('Error:', error);
+              console.error('Error submitting form:', error);
               // Handle error - show an error message or take appropriate action
           });
       });
