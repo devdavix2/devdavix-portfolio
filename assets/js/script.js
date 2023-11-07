@@ -74,22 +74,45 @@ window.addEventListener("load", reveal);
 
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const contactForm = document.getElementById('contactForm');
-        const successToast = document.getElementById('successToast');
+document.addEventListener('DOMContentLoaded', function () {
+  const contactForm = document.getElementById('contactForm');
+  const successToast = document.getElementById('successToast');
 
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+  if (contactForm && successToast) {
+      contactForm.addEventListener('submit', function (e) {
+          e.preventDefault();
 
-            // Assuming you've already implemented the sendmail.php logic
+          // Get form data
+          const formData = new FormData(contactForm);
 
-            // Show the success toast
-            successToast.classList.remove('hidden');
+          // Send form data using Fetch API
+          fetch('sendmail.php', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => {
+              if (response.ok) {
+                  // Show the success toast
+                  successToast.classList.remove('hidden');
 
-            // Hide the toast after 5 seconds
-            setTimeout(function () {
-                successToast.classList.add('hidden');
-            }, 5000);
-        });
-    });
+                  // Hide the toast after 5 seconds
+                  setTimeout(function () {
+                      successToast.classList.add('hidden');
+                  }, 5000);
 
+                  // Optionally, reset the form
+                  contactForm.reset();
+              } else {
+                  console.error('Error submitting form:', response.statusText);
+                  // Handle error - show an error message or take appropriate action
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              // Handle error - show an error message or take appropriate action
+          });
+      });
+  } else {
+      console.error('Contact form or success toast not found.');
+  }
+});
