@@ -509,6 +509,51 @@
         </div>
     </section>
     
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const contactForm = document.getElementById('contactForm');
+            const successToast = document.getElementById('successToast');
+    
+            if (contactForm && successToast) {
+                contactForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+    
+                    // Get form data
+                    const formData = new FormData(contactForm);
+    
+                    // Send form data to serverless function
+                    fetch('/api/sendmail', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(Object.fromEntries(formData)),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Show the success toast
+                            successToast.classList.remove('hidden');
+    
+                            // Hide the toast after 5 seconds
+                            setTimeout(function () {
+                                successToast.classList.add('hidden');
+                            }, 5000);
+    
+                            // Optionally, reset the form
+                            contactForm.reset();
+                        })
+                        .catch(error => {
+                            console.error('Error submitting form:', error);
+                            // Handle error - show an error message or take appropriate action
+                        });
+                });
+            } else {
+                console.error('Contact form or success toast not found.');
+            }
+        });
+    </script>
+    
+    
 
 
 
