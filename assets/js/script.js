@@ -70,10 +70,6 @@ for (let i = 0, len = revealDelayElements.length; i < len; i++) {
 
 window.addEventListener("scroll", reveal);
 window.addEventListener("load", reveal);
-
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
   const contactForm = document.getElementById('contactForm');
   const successToast = document.getElementById('successToast');
@@ -82,34 +78,31 @@ document.addEventListener('DOMContentLoaded', function () {
       contactForm.addEventListener('submit', function (e) {
           e.preventDefault();
 
-          // Get form data
           const formData = new FormData(contactForm);
 
-          // Send form data to serverless function
-          fetch('/api/sendmail', {
+          fetch('send-email.php', { // Update to the correct path if the PHP file is located elsewhere
               method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(Object.fromEntries(formData)),
+              body: formData,
           })
-          .then(response => response.json())
-          .then(data => {
-              // Show the success toast
-              successToast.classList.remove('hidden');
+              .then(response => {
+                  if (response.ok) {
+                      // Show success toast
+                      successToast.classList.remove('hidden');
+                      setTimeout(function () {
+                          successToast.classList.add('hidden');
+                      }, 5000);
 
-              // Hide the toast after 5 seconds
-              setTimeout(function () {
-                  successToast.classList.add('hidden');
-              }, 5000);
-
-              // Optionally, reset the form
-              contactForm.reset();
-          })
-          .catch(error => {
-              console.error('Error submitting form:', error);
-              // Handle error - show an error message or take appropriate action
-          });
+                      // Optionally, reset the form
+                      contactForm.reset();
+                  } else {
+                      // Handle error - show an error message or take appropriate action
+                      console.error('Error submitting form:', response.statusText);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error submitting form:', error);
+                  // Handle error - show an error message or take appropriate action
+              });
       });
   } else {
       console.error('Contact form or success toast not found.');
